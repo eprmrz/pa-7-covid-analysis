@@ -133,7 +133,8 @@ Note - there may be an error in the code below.
 
 ```{r}
 #| label: us-state-population-data
-us_pop <- read_csv("USpop2019.csv")
+us_pop <- read_csv("data/USpop2019.csv")
+  
 ```
 
 ### Which 10 US States/Territories had the most COVID-19 Cases Relative to Population Size from January 2020-March 2023
@@ -142,6 +143,20 @@ Choose one of the above statistics to calculate to make our comparison between s
 
 ```{r}
 state_totals |> 
+  left_join(us_pop, by = c("state" = "NAME")) |> 
+  drop_na() |> 
+  mutate(case_rate = (total/estimate)*100000) |> 
+  arrange(desc(case_rate)) |> 
+  slice_head(n = 10) |> 
+  ggplot(aes(x = case_rate, 
+             y = fct_reorder(state, case_rate))) +
+  geom_col(fill = "blue4") +
+  labs(x = "Total Number of Cases per 100,000",
+       y = "State", 
+       title = "Covid-19 Cases from January 2020 through March 2023",
+       caption = "Source: New York Times, Coronavirus (Covid-19) Data in the United States") +
+  theme_light()
+  
   ## add in column with state population sizes  
   ## calculate your chosen relative rate (e.g. proportion, percentage, rate)
   ## order the data by your relative rate
@@ -158,7 +173,7 @@ state_totals |>
 
 **Which state had highest number of COVID-19 cases relative to population size between January 2020 and March 2023?**
 
->Insert Answer Here
+>Rhode Island
 
 
 ### Other Questions
@@ -168,12 +183,12 @@ state_totals |>
 - Time scale and impact of time    
 - 
 
->Insert Answer Here
+>Maybe the NYT data is less reliable than official government sources. Maybe some stuffs underreported compared to others. 
 
 
 **What other questions would you like to try to answer using this data? Would that require other data sources? What information would you need to answer your questions?**
 
->Insert Answer Here  
+>How does the NYT data compare to CDC data? How many individuals in the population had Covid during this time (rather than measuring number cases, where certain people could be counted multiple times because they got it more than once). 
 
 
 
